@@ -4,6 +4,8 @@ App mobile (iOS e Android), feito com Expo e React Native, que monta os jantares
 
 A ideia segue o app Herbi (plano semanal, "deslize para montar a semana", importação de receitas do TikTok/Instagram e lista por corredor), com nome, identidade visual, receitas e preços próprios para o Brasil.
 
+![Telas do salsa](docs/telas.png)
+
 ## Telas
 
 **Onboarding**
