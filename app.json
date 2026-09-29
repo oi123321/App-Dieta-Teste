@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "Salsa",
+    "slug": "salsa",
+    "scheme": "salsa",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F8F4EA",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "app.salsa.planner"
+    },
+    "android": {
+      "package": "app.salsa.planner",
+      "adaptiveIcon": {
+        "backgroundColor": "#15402A",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "name": "Salsa — plano de refeições",
+      "shortName": "Salsa",
+      "themeColor": "#15402A",
+      "backgroundColor": "#F8F4EA"
+    },
+    "plugins": [
+      "expo-image",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 170,
+          "resizeMode": "contain",
+          "backgroundColor": "#15402A"
+        }
+      ]
+    ]
+  }
+}
