@@ -37,11 +37,14 @@ export function DayPickerSheet({ visible, title, onPick, onClose }: Props) {
             >
               <Text style={styles.dayName}>{dayName}</Text>
               <View style={[styles.dot, { backgroundColor: entry ? colors.sunDeep : colors.leaf }]} />
-              <Text style={styles.dayState} numberOfLines={1}>
-                {entry
-                  ? `troca: ${current?.title ?? 'receita do dia'}${entry.days.length > 1 ? ` (${daysLabel(entry.days)})` : ''}`
-                  : 'livre'}
-              </Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.dayState} numberOfLines={1}>
+                  {entry ? `troca: ${current?.title ?? 'receita do dia'}` : 'livre'}
+                </Text>
+                {entry && entry.days.length > 1 ? (
+                  <Text style={styles.batch}>vale para {daysLabel(entry.days)} (cozinhar em dobro)</Text>
+                ) : null}
+              </View>
             </Pressable>
           );
         })}
@@ -65,5 +68,6 @@ const styles = StyleSheet.create({
   },
   dayName: { fontFamily: fonts.extrabold, fontSize: 15, color: colors.forest, width: 70 },
   dot: { width: 7, height: 7, borderRadius: 4 },
-  dayState: { flex: 1, fontFamily: fonts.medium, fontSize: 13, color: colors.muted },
+  dayState: { fontFamily: fonts.medium, fontSize: 13, color: colors.muted },
+  batch: { fontFamily: fonts.semibold, fontSize: 11.5, color: colors.leafDark, marginTop: 1 },
 });
