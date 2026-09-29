@@ -181,8 +181,8 @@ export function BuildWeekScreen({ navigation }: RootScreenProps<'BuildWeek'>) {
           <Emoji name="face-savoring-food" size={72} />
           <Text style={[type.h3, { textAlign: 'center', marginTop: 12 }]}>Acabaram as sugestões</Text>
           <Text style={[type.body, { textAlign: 'center', marginTop: 6 }]}>
-            Faltam {slots.length - picked.length} {slots.length - picked.length === 1 ? 'jantar' : 'jantares'}. Quer que a gente
-            complete?
+            Faltam {slots.length - picked.length} {slots.length - picked.length === 1 ? 'refeição' : 'refeições'}. Quer que a
+            gente complete?
           </Text>
           <View style={{ alignSelf: 'stretch', gap: 10, marginTop: 20 }}>
             <Button label="Completar automaticamente" icon={WandSparkles} onPress={autoFill} />
@@ -193,7 +193,7 @@ export function BuildWeekScreen({ navigation }: RootScreenProps<'BuildWeek'>) {
         <>
           <View style={[styles.deck, { height: cardH + 26 }]}>
             {currentSlot.length > 1 ? (
-              <Text style={styles.slotHint}>Para {daysLabel(currentSlot)} · cozinha 1 vez, janta 2</Text>
+              <Text style={styles.slotHint}>Para {daysLabel(currentSlot)} · cozinha 1 vez, rende 2 dias</Text>
             ) : (
               <Text style={styles.slotHint}>Para {daysLabel(currentSlot, 'long').toLowerCase()}</Text>
             )}

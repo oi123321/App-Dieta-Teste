@@ -75,7 +75,7 @@ export function GeneratingScreen(_props: RootScreenProps<'Generating'>) {
         </View>
         <Text style={styles.title}>montando sua semana…</Text>
         <Text style={styles.sub}>
-          {profile.dinners} jantares para {profile.people} {profile.people === 1 ? 'pessoa' : 'pessoas'}
+          {profile.dinners} refeições para {profile.people} {profile.people === 1 ? 'pessoa' : 'pessoas'}
         </Text>
       </View>
       <View style={styles.list}>

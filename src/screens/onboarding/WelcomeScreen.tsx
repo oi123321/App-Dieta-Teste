@@ -92,7 +92,7 @@ export function WelcomeScreen({ navigation }: RootScreenProps<'Welcome'>) {
 
       <View style={[styles.sheet, { paddingBottom: insets.bottom + 16 }]}>
         <Text style={[type.h1, compact && { fontSize: 29, lineHeight: 32 }]} accessibilityRole="header">
-          a semana inteira de jantares, <Text style={{ color: colors.leaf }}>resolvida em segundos</Text>
+          as refeições da semana inteira, <Text style={{ color: colors.leaf }}>resolvidas em segundos</Text>
         </Text>
         <Text style={styles.sub}>Escolha seu mercado, diga quanto gasta e receba um cardápio com a lista de compras pronta.</Text>
         <View style={styles.features}>

@@ -48,7 +48,7 @@ export function HouseholdScreen({ navigation }: RootScreenProps<'Household' | 'E
       step={onboarded ? undefined : 3}
       editLabel="Casa e preferências"
       onBack={() => navigation.goBack()}
-      title="quem janta com você?"
+      title="pra quantas pessoas você cozinha?"
       subtitle="Assim a gente acerta as porções e as quantidades da lista."
       footer={<Button label={onboarded ? 'Salvar e refazer plano' : 'Continuar'} onPress={save} />}
     >
@@ -74,7 +74,8 @@ export function HouseholdScreen({ navigation }: RootScreenProps<'Household' | 'E
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Jantares por semana</Text>
+        <Text style={styles.cardTitle}>Refeições por semana</Text>
+        <Text style={styles.cardText}>Uma refeição principal por dia, almoço ou jantar.</Text>
         <View style={styles.segment}>
           {[3, 4, 5, 6, 7].map((n) => {
             const active = n === dinners;
@@ -83,7 +84,7 @@ export function HouseholdScreen({ navigation }: RootScreenProps<'Household' | 'E
                 key={n}
                 accessibilityRole="radio"
                 accessibilityState={{ checked: active }}
-                accessibilityLabel={`${n} jantares por semana`}
+                accessibilityLabel={`${n} refeições por semana`}
                 onPress={() => {
                   haptics.select();
                   setDinners(n);
@@ -101,7 +102,8 @@ export function HouseholdScreen({ navigation }: RootScreenProps<'Household' | 'E
         <View style={{ flex: 1 }}>
           <Text style={styles.cardTitle}>Cozinhar em dobro</Text>
           <Text style={styles.cardText}>
-            Cozinhe uma vez e jante duas: sobra pro dia seguinte. {batch ? `Você vai cozinhar ${sessions}× na semana.` : ''}
+            Cozinhe uma vez e coma em dois dias: a sobra vai pro dia seguinte.{' '}
+            {batch ? `Você vai cozinhar ${sessions}× na semana.` : ''}
           </Text>
         </View>
         <Switch

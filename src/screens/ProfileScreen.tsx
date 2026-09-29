@@ -210,7 +210,7 @@ function Settings({ navigation, signedIn }: { navigation: TabScreenProps<'Profil
       title: 'Casa e preferências',
       value: [
         plural(profile.people, 'pessoa', 'pessoas'),
-        plural(profile.dinners, 'jantar', 'jantares'),
+        plural(profile.dinners, 'refeição', 'refeições'),
         ...profile.prefs.map((p) => PREF_LABELS[p]),
       ].join(' · '),
       onPress: () => navigation.navigate('EditHousehold'),

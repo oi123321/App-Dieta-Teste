@@ -48,23 +48,23 @@ export function BudgetScreen({ navigation }: RootScreenProps<'Budget' | 'EditBud
           emoji: 'check-mark-button',
           tone: 'ok',
           title: 'Cabe com folga',
-          text: `Seus ${profile.dinners} jantares devem custar cerca de ${brl(estimate.typical, { cents: false })}. Sobram ≈ ${brl(
+          text: `Suas ${profile.dinners} refeições devem custar cerca de ${brl(estimate.typical, { cents: false })}. Sobram ≈ ${brl(
             budget - estimate.typical,
             { cents: false },
-          )} para o café, o almoço e os lanches.`,
+          )} para o café da manhã, os lanches e o que mais faltar.`,
         }
       : budget >= estimate.minimum
         ? {
             emoji: 'coin',
             tone: 'tight',
             title: 'Dá pra fazer',
-            text: `Vamos priorizar receitas mais econômicas para seus ${profile.dinners} jantares caberem em ${brl(budget, { cents: false })}.`,
+            text: `Vamos priorizar receitas mais econômicas para suas ${profile.dinners} refeições caberem em ${brl(budget, { cents: false })}.`,
           }
         : {
             emoji: 'warning',
             tone: 'low',
             title: 'Orçamento apertado',
-            text: `Jantares para ${profile.people} ${profile.people === 1 ? 'pessoa' : 'pessoas'} no ${marketName} saem por pelo menos ≈ ${brl(
+            text: `Refeições para ${profile.people} ${profile.people === 1 ? 'pessoa' : 'pessoas'} no ${marketName} saem por pelo menos ≈ ${brl(
               estimate.minimum,
               { cents: false },
             )}. Vamos montar o plano mais econômico possível.`,
@@ -168,7 +168,7 @@ export function BudgetScreen({ navigation }: RootScreenProps<'Budget' | 'EditBud
       </View>
 
       <Text style={styles.note}>
-        Um jantar para {profile.people} {profile.people === 1 ? 'pessoa' : 'pessoas'} no {marketName} custa em média{' '}
+        Uma refeição para {profile.people} {profile.people === 1 ? 'pessoa' : 'pessoas'} no {marketName} custa em média{' '}
         {brl(estimate.perDinner)}. Você pode mudar o orçamento quando quiser no seu perfil.
       </Text>
     </StepLayout>

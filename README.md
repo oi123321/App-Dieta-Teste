@@ -1,6 +1,6 @@
 # salsa — plano de refeições
 
-App mobile (iOS e Android), feito com Expo e React Native, que monta os jantares da semana de acordo com o **mercado** onde você compra, o **orçamento** semanal e os **aparelhos** que você tem em casa. Ele também gera a lista de compras organizada por corredor.
+App mobile (iOS e Android), feito com Expo e React Native, que monta as refeições da semana de acordo com o **mercado** onde você compra, o **orçamento** semanal e os **aparelhos** que você tem em casa. Ele também gera a lista de compras organizada por corredor.
 
 Cada pessoa tem um **perfil** e pode publicar suas receitas na **comunidade**, sempre com a quantidade de cada ingrediente, que aparece também dentro de cada passo do preparo. Quem vê pode curtir, comentar, **salvar** e **colocar a receita no cardápio da semana** com um toque (a lista de compras se atualiza sozinha).
 
@@ -17,14 +17,14 @@ A ideia segue o app Herbi (plano semanal, "deslize para montar a semana", import
 1. **Boas-vindas**
 2. **Crie seu perfil** — nome, @usuário (sugerido a partir do nome, com checagem de disponibilidade), foto ou avatar, cidade e bio. Com servidor configurado, também e-mail e senha ("Criar conta" / "Já tenho conta").
 3. **Onde você faz as compras?** — escolha do mercado (Assaí, Atacadão, Carrefour, Pão de Açúcar, Dia, Guanabara… ou "outro mercado"), com busca e faixa de preço ($, $$, $$$).
-4. **Quem janta com você?** — pessoas, jantares por semana, "cozinhar em dobro" e preferências (vegetariano, sem lactose, sem glúten, mais proteína, menos carboidrato).
+4. **Pra quantas pessoas você cozinha?** — pessoas, refeições por semana (uma principal por dia, almoço ou jantar), "cozinhar em dobro" e preferências (vegetariano, sem lactose, sem glúten, mais proteína, menos carboidrato).
 5. **Quanto você gasta por semana no mercado?** — orçamento com controle deslizante, valores rápidos e um aviso se o valor cabe, fica apertado ou é baixo para o mercado escolhido.
 6. **O que tem na sua cozinha?** — cozinha ilustrada: toque em fogão, forno, micro-ondas, air fryer, panela de pressão, liquidificador e grill.
 7. **Montando sua semana…**
 
 **App**
 
-- **Semana ("bom apetite!")** — custo aproximado × orçamento, atalho para a lista, jantares por dia com preço, tempo, porções e o aviso "cozinhe 1 vez, jante 2". Ainda tem trocar receita (⇄), gerar outro plano e ajustar ao orçamento.
+- **Semana ("bom apetite!")** — custo aproximado × orçamento, atalho para a lista, a refeição de cada dia com preço, tempo, porções e o aviso "cozinhe 1 vez, rende 2 dias". Ainda tem trocar receita (⇄), gerar outro plano e ajustar ao orçamento.
 - **Monte sua semana** — deslize para a direita para adicionar e para a esquerda para pular. Tem desfazer e "completar automaticamente".
 - **Lista de compras** — agrupada por corredor, com quantidades já somadas, itens para marcar, total estimado, itens extras e compartilhamento.
 - **Receita** — proteína, carboidratos, gorduras, kcal, porções e tempo, botões "Curti" e "Não é pra mim", ingredientes que se ajustam ao número de porções, modo de preparo com a quantidade de cada ingrediente embaixo do passo em que ele é usado e o botão "Adicionar ao plano".

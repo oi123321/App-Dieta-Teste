@@ -78,7 +78,7 @@ export function DayCard({ entry, recipe, people, marketIndex, onPress, onSwap }:
           <View style={styles.batch}>
             <CalendarCheck size={14} color={colors.forestSoft} strokeWidth={2.2} />
             <Text style={styles.batchText} numberOfLines={1}>
-              Cozinhe 1 vez, jante 2 ({daysLabel(entry.days)})
+              Cozinhe 1 vez, rende {entry.days.length} dias ({daysLabel(entry.days)})
             </Text>
           </View>
         ) : null}

@@ -141,9 +141,9 @@ export function PlanScreen({ navigation }: TabScreenProps<'Plan'>) {
 
       <View style={styles.sectionRow}>
         <View>
-          <Text style={styles.sectionTitle}>Jantares da semana</Text>
+          <Text style={styles.sectionTitle}>Refeições da semana</Text>
           <Text style={styles.sectionSub}>
-            {plural(dinners, 'jantar', 'jantares')} · você cozinha {entries.length}×
+            {plural(dinners, 'refeição', 'refeições')} · você cozinha {entries.length}×
           </Text>
         </View>
         <Pressable
