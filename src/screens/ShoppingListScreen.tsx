@@ -47,9 +47,13 @@ export function ShoppingListScreen({ navigation }: TabScreenProps<'List'>) {
     } catch {
       // Fall back to the clipboard below.
     }
-    await Clipboard.setStringAsync(message).catch(() => {});
-    haptics.success();
-    flash('Lista copiada! É só colar no WhatsApp.');
+    const copied = await Clipboard.setStringAsync(message).catch(() => false);
+    if (copied) {
+      haptics.success();
+      flash('Lista copiada! É só colar no WhatsApp.');
+    } else {
+      flash('Não deu para compartilhar por aqui. Tente pelo app no celular.');
+    }
   };
 
   const add = () => {
