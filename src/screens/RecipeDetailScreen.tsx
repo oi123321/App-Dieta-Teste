@@ -16,7 +16,7 @@ import {
   Wheat,
   type LucideIcon,
 } from '../components/icons';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -25,13 +25,15 @@ import { Button } from '../components/Button';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { Emoji } from '../components/Emoji';
 import { IconButton } from '../components/IconButton';
+import { IngredientList } from '../components/recipe/IngredientList';
+import { recipeRows } from '../components/recipe/ingredientRows';
+import { StepList } from '../components/recipe/StepList';
 import { RecipeImage } from '../components/RecipeImage';
 import { Stepper } from '../components/Stepper';
 import { TagRow } from '../components/Tags';
 import { applianceName, appliancesUsed } from '../data/appliances';
-import { getIngredient } from '../data/ingredients';
-import type { Aisle } from '../data/types';
-import { brl, DAY_SHORT, daysLabel, minutesLabel, recipeQty } from '../lib/format';
+import type { Recipe } from '../data/types';
+import { brl, DAY_SHORT, daysLabel, minutesLabel, onDayLabel } from '../lib/format';
 import { haptics } from '../lib/haptics';
 import { recipeCost, recipeMacros, recipeTags } from '../lib/recipes';
 import type { RootScreenProps } from '../navigation/types';
@@ -39,17 +41,7 @@ import { useMarketInfo, useRecipeLookup } from '../store/selectors';
 import { useAppStore } from '../store/useAppStore';
 import { colors, fonts, GUTTER, radius, shadow, type } from '../theme';
 
-const AISLE_TINT: Record<Aisle, string> = {
-  hortifruti: '#E8F3DC',
-  acougue: '#FBE0DA',
-  frios: '#FFF0C2',
-  padaria: '#F6E6D2',
-  mercearia: '#F1EADB',
-  temperos: '#DCEBF5',
-  congelados: '#E3EEF7',
-  outros: '#EEE8F7',
-  despensa: '#F0EBDF',
-};
+const NO_RECIPE: Recipe = { id: '', title: '', minutes: 0, servings: 1, ingredients: [], steps: [], appliances: [] };
 
 export function RecipeDetailScreen({ route, navigation }: RootScreenProps<'RecipeDetail'>) {
   const insets = useSafeAreaInsets();
@@ -68,6 +60,8 @@ export function RecipeDetailScreen({ route, navigation }: RootScreenProps<'Recip
   const [picking, setPicking] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const factor = servings / (recipe?.servings ?? 1);
+  const rows = useMemo(() => recipeRows(recipe ?? NO_RECIPE, factor), [recipe, factor]);
 
   if (!recipe) {
     return (
@@ -80,12 +74,13 @@ export function RecipeDetailScreen({ route, navigation }: RootScreenProps<'Recip
 
   const macros = recipeMacros(recipe);
   const cost = recipeCost(recipe, servings, index);
-  const factor = servings / recipe.servings;
   const entry = plan?.entries.find((e) => e.recipeId === recipe.id);
   const isLiked = liked.includes(recipe.id);
   const isDisliked = disliked.includes(recipe.id);
   const used = appliancesUsed(recipe.appliances, profile.appliances);
   const source = recipe.source;
+  const fromCommunity = source?.platform === 'comunidade';
+  const video = source && !fromCommunity ? source : undefined;
   const platformName = source?.platform === 'tiktok' ? 'TikTok' : source?.platform === 'instagram' ? 'Instagram' : 'link';
 
   const stats: { icon: LucideIcon; value: string; label: string }[] = [
@@ -101,7 +96,7 @@ export function RecipeDetailScreen({ route, navigation }: RootScreenProps<'Recip
     putRecipeOnDay(recipe.id, day);
     haptics.success();
     setPicking(false);
-    setToast(`Adicionada na ${DAY_SHORT[day]}! A lista já foi atualizada.`);
+    setToast(`Adicionada ${onDayLabel(day)}! A lista já foi atualizada.`);
     setTimeout(() => setToast(null), 2400);
   };
 
@@ -109,13 +104,13 @@ export function RecipeDetailScreen({ route, navigation }: RootScreenProps<'Recip
     <View style={styles.root}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 + insets.bottom }}>
         <View style={styles.hero}>
-          <RecipeImage recipe={recipe} style={StyleSheet.absoluteFill} plain={Boolean(source)} />
+          <RecipeImage recipe={recipe} style={StyleSheet.absoluteFill} plain={Boolean(video)} />
           <LinearGradient colors={['rgba(8,20,12,0.45)', 'rgba(8,20,12,0)']} style={styles.heroTop} />
           <LinearGradient colors={['rgba(8,20,12,0)', 'rgba(8,20,12,0.72)']} style={styles.heroBottom} />
-          {source ? (
+          {video ? (
             <Pressable
               style={styles.play}
-              onPress={() => Linking.openURL(source.url).catch(() => {})}
+              onPress={() => Linking.openURL(video.url).catch(() => {})}
               accessibilityRole="button"
               accessibilityLabel={`Assistir no ${platformName}`}
             >
@@ -197,41 +192,12 @@ export function RecipeDetailScreen({ route, navigation }: RootScreenProps<'Recip
             <Text style={styles.sectionTitle}>Ingredientes</Text>
             <Stepper value={servings} min={1} max={12} onChange={setServings} label="porções" />
           </View>
-          <View style={styles.group}>
-            {recipe.ingredients.map((item, i) => {
-              const ing = getIngredient(item.id);
-              if (!ing) return null;
-              return (
-                <View key={item.id} style={[styles.ingRow, i > 0 && styles.rowBorder]}>
-                  <View style={[styles.ingIcon, { backgroundColor: AISLE_TINT[ing.aisle] }]}>
-                    <Emoji name={ing.icon} size={24} />
-                  </View>
-                  <Text style={styles.ingName}>{ing.name}</Text>
-                  <Text style={styles.ingQty}>{ing.pantry ? 'a gosto' : recipeQty(ing, item.qty * factor)}</Text>
-                </View>
-              );
-            })}
-            {recipe.extras?.map((extra, i) => (
-              <View key={`x${i}`} style={[styles.ingRow, (recipe.ingredients.length > 0 || i > 0) && styles.rowBorder]}>
-                <View style={[styles.ingIcon, { backgroundColor: AISLE_TINT.outros }]}>
-                  <Emoji name="clipboard" size={22} />
-                </View>
-                <Text style={styles.ingName}>{extra.text}</Text>
-              </View>
-            ))}
-          </View>
+          <IngredientList rows={rows} />
 
           {recipe.steps.length > 0 ? (
             <>
               <Text style={[styles.sectionTitle, { marginTop: 26, marginBottom: 12 }]}>Modo de preparo</Text>
-              {recipe.steps.map((step, i) => (
-                <View key={i} style={styles.step}>
-                  <View style={styles.stepNum}>
-                    <Text style={styles.stepNumText}>{i + 1}</Text>
-                  </View>
-                  <Text style={styles.stepText}>{step}</Text>
-                </View>
-              ))}
+              <StepList steps={recipe.steps} rows={rows} />
             </>
           ) : null}
 
@@ -252,21 +218,34 @@ export function RecipeDetailScreen({ route, navigation }: RootScreenProps<'Recip
             </>
           ) : null}
 
-          {source ? (
+          {video ? (
             <View style={styles.sourceCard}>
               <Text style={styles.sourceText}>
                 Importada do {platformName}
-                {source.author ? ` · @${source.author.replace(/^@/, '')}` : ''}
+                {video.author ? ` · @${video.author.replace(/^@/, '')}` : ''}
               </Text>
               <Pressable
                 style={styles.sourceBtn}
-                onPress={() => Linking.openURL(source.url).catch(() => {})}
+                onPress={() => Linking.openURL(video.url).catch(() => {})}
                 accessibilityRole="link"
               >
                 <ExternalLink size={15} color={colors.leafDark} />
                 <Text style={styles.sourceBtnText}>Abrir vídeo</Text>
               </Pressable>
             </View>
+          ) : null}
+          {fromCommunity && source.postId ? (
+            <Pressable
+              style={styles.sourceCard}
+              onPress={() => navigation.navigate('PostDetail', { postId: source.postId! })}
+              accessibilityRole="button"
+            >
+              <Emoji name="speech-balloon" size={24} />
+              <Text style={styles.sourceText}>Receita da comunidade{source.author ? ` · @${source.author}` : ''}</Text>
+              <View style={styles.sourceBtn}>
+                <Text style={styles.sourceBtnText}>Ver post</Text>
+              </View>
+            </Pressable>
           ) : null}
 
           {recipe.imported ? (
@@ -407,24 +386,6 @@ const styles = StyleSheet.create({
   costStrong: { fontFamily: fonts.extrabold, color: colors.forest },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 26, marginBottom: 12 },
   sectionTitle: { fontFamily: fonts.display, fontSize: 23, color: colors.forest, letterSpacing: -0.5 },
-  group: { backgroundColor: colors.card, borderRadius: radius.lg, overflow: 'hidden', ...shadow(1) },
-  ingRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 11 },
-  rowBorder: { borderTopWidth: 1, borderTopColor: colors.lineSoft },
-  ingIcon: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center' },
-  ingName: { flex: 1, fontFamily: fonts.semibold, fontSize: 15, color: colors.ink },
-  ingQty: { fontFamily: fonts.semibold, fontSize: 14, color: colors.muted },
-  step: { flexDirection: 'row', gap: 12, marginBottom: 14 },
-  stepNum: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: colors.forest,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 1,
-  },
-  stepNumText: { fontFamily: fonts.extrabold, fontSize: 14, color: colors.sun },
-  stepText: { flex: 1, fontFamily: fonts.medium, fontSize: 15, lineHeight: 22, color: colors.ink },
   appliances: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   applianceChip: {
     flexDirection: 'row',

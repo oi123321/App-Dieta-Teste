@@ -34,6 +34,22 @@ export function useScreenSize() {
   return frame ?? { width: window.width, height: window.height };
 }
 
+/**
+ * Where the phone frame sits in the browser window, or null on devices.
+ * Modals cover the whole window, so they use this to stay inside the phone.
+ */
+export function useFrameRect() {
+  const frame = useContext(FrameContext);
+  const window = useWindowDimensions();
+  if (!frame) return null;
+  return {
+    left: (window.width - frame.width) / 2,
+    top: (window.height - frame.height) / 2,
+    width: frame.width,
+    height: frame.height,
+  };
+}
+
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,

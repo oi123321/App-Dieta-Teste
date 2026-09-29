@@ -5,12 +5,14 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 export type TabParamList = {
   Plan: undefined;
   Recipes: undefined;
+  Community: undefined;
   List: undefined;
   Profile: undefined;
 };
 
 export type RootStackParamList = {
   Welcome: undefined;
+  CreateProfile: undefined;
   Market: undefined;
   Household: undefined;
   Budget: undefined;
@@ -21,6 +23,10 @@ export type RootStackParamList = {
   BuildWeek: undefined;
   Swap: { entryId: string };
   Import: { url?: string } | undefined;
+  PostDetail: { postId: string; focusComments?: boolean };
+  Composer: undefined;
+  UserProfile: { userId: string };
+  EditProfile: undefined;
   // Same screens as onboarding, opened from the profile. Separate names so that
   // finishing onboarding does not leave these routes on the stack.
   EditMarket: undefined;

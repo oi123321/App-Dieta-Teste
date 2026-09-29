@@ -1,5 +1,5 @@
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import { BookOpen, CalendarDays, ShoppingBasket, UserRound, type LucideIcon } from '../components/icons';
+import { BookOpen, CalendarDays, ShoppingBasket, UserRound, UsersRound, type LucideIcon } from '../components/icons';
 import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -15,6 +15,7 @@ import type { TabParamList } from './types';
 const ICONS: Record<keyof TabParamList, LucideIcon> = {
   Plan: CalendarDays,
   Recipes: BookOpen,
+  Community: UsersRound,
   List: ShoppingBasket,
   Profile: UserRound,
 };
@@ -22,14 +23,21 @@ const ICONS: Record<keyof TabParamList, LucideIcon> = {
 function usePendingItems(): number {
   const plan = useAppStore((s) => s.plan);
   const imported = useAppStore((s) => s.imported);
+  const community = useAppStore((s) => s.community);
   const people = useAppStore((s) => s.profile.people);
   const marketId = useAppStore((s) => s.profile.marketId);
   const checked = useAppStore((s) => s.checked);
   const customItems = useAppStore((s) => s.customItems);
   return useMemo(() => {
-    const list = buildShoppingList(plan, (id) => findRecipe(id, imported), people, getMarket(marketId)?.index ?? 1, customItems);
+    const list = buildShoppingList(
+      plan,
+      (id) => findRecipe(id, imported, community),
+      people,
+      getMarket(marketId)?.index ?? 1,
+      customItems,
+    );
     return list.sections.flatMap((s) => s.items).filter((i) => !i.pantry && !checked[i.key]).length;
-  }, [plan, imported, people, marketId, checked, customItems]);
+  }, [plan, imported, community, people, marketId, checked, customItems]);
 }
 
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
@@ -65,7 +73,9 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
                 </View>
               ) : null}
             </View>
-            <Text style={[styles.label, focused && styles.labelActive]}>{label}</Text>
+            <Text style={[styles.label, focused && styles.labelActive]} numberOfLines={1}>
+              {label}
+            </Text>
           </Pressable>
         );
       })}
@@ -80,13 +90,13 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 26,
     borderTopRightRadius: 26,
     paddingTop: 10,
-    paddingHorizontal: 10,
+    paddingHorizontal: 6,
     ...shadow(3),
   },
   item: { flex: 1, alignItems: 'center', gap: 3 },
-  iconWrap: { width: 58, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
+  iconWrap: { width: 54, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
   iconWrapActive: { backgroundColor: colors.leafSoft },
-  label: { fontFamily: fonts.semibold, fontSize: 11.5, color: colors.muted },
+  label: { fontFamily: fonts.semibold, fontSize: 11, color: colors.muted },
   labelActive: { fontFamily: fonts.extrabold, color: colors.forest },
   badge: {
     position: 'absolute',

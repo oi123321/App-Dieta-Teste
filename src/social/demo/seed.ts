@@ -1,0 +1,457 @@
+import type { ApplianceId } from '../../data/types';
+import { resolveCatalogId } from '../convert';
+import type { PostIngredient, PostUnit, SocialProfile } from '../types';
+
+/**
+ * Example content for demo mode (no server configured). Everything here is
+ * labeled as an example in the UI and never mixed with real accounts.
+ */
+export const EXAMPLE_USERS: (SocialProfile & { baseFollowers: number; baseFollowing: number })[] = [
+  {
+    id: 'ex-bia',
+    username: 'cozinha.da.bia',
+    name: 'Bia Lima',
+    bio: 'Receitas nordestinas do dia a dia.',
+    city: 'Recife',
+    avatar: { kind: 'emoji', emoji: 'woman-cook-medium', color: '#FFE3B3' },
+    createdAt: '2026-06-02T12:00:00Z',
+    isExample: true,
+    baseFollowers: 1843,
+    baseFollowing: 212,
+  },
+  {
+    id: 'ex-rafa',
+    username: 'rafa.marmitas',
+    name: 'Rafa Souza',
+    bio: 'Marmitas para a semana toda gastando pouco.',
+    city: 'Belo Horizonte',
+    avatar: { kind: 'emoji', emoji: 'man-cook-dark', color: '#DCEBF5' },
+    createdAt: '2026-05-11T12:00:00Z',
+    isExample: true,
+    baseFollowers: 3120,
+    baseFollowing: 98,
+  },
+  {
+    id: 'ex-camila',
+    username: 'camis.na.cozinha',
+    name: 'Camila Nunes',
+    bio: 'Comida de verdade em 30 minutos.',
+    city: 'São Paulo',
+    avatar: { kind: 'emoji', emoji: 'woman-cook-light', color: '#F9D7D0' },
+    createdAt: '2026-04-20T12:00:00Z',
+    isExample: true,
+    baseFollowers: 5402,
+    baseFollowing: 310,
+  },
+  {
+    id: 'ex-jo',
+    username: 'jo.proteina',
+    name: 'Jô Prado',
+    bio: 'Proteína no prato, sem neura.',
+    city: 'Curitiba',
+    avatar: { kind: 'emoji', emoji: 'woman-cook-medium-dark', color: '#E4F1D6' },
+    createdAt: '2026-07-01T12:00:00Z',
+    isExample: true,
+    baseFollowers: 987,
+    baseFollowing: 143,
+  },
+  {
+    id: 'ex-thiago',
+    username: 'tio.thiago',
+    name: 'Thiago Alves',
+    bio: 'Moqueca é religião.',
+    city: 'Salvador',
+    avatar: { kind: 'emoji', emoji: 'man-cook-medium-dark', color: '#FFF0C2' },
+    createdAt: '2026-03-15T12:00:00Z',
+    isExample: true,
+    baseFollowers: 2266,
+    baseFollowing: 57,
+  },
+  {
+    id: 'ex-lu',
+    username: 'lu.forno',
+    name: 'Lu Mendes',
+    bio: 'Forno ligado, casa cheirosa.',
+    city: 'Porto Alegre',
+    avatar: { kind: 'emoji', emoji: 'cook-medium-light', color: '#ECE5F5' },
+    createdAt: '2026-02-08T12:00:00Z',
+    isExample: true,
+    baseFollowers: 1391,
+    baseFollowing: 188,
+  },
+];
+
+export interface StoredPost {
+  id: string;
+  authorId: string;
+  title: string;
+  description: string;
+  photoUrl: string | null;
+  minutes: number;
+  servings: number;
+  ingredients: PostIngredient[];
+  steps: string[];
+  appliances: ApplianceId[];
+  createdAt: string;
+}
+
+export interface ExamplePost extends StoredPost {
+  baseLikes: number;
+  baseSaves: number;
+}
+
+export interface StoredComment {
+  id: string;
+  postId: string;
+  authorId: string;
+  body: string;
+  createdAt: string;
+}
+
+/** Compact ingredient notation: [name, qty | null, unit]. */
+function ing(list: [string, number | null, PostUnit][]): PostIngredient[] {
+  return list.map(([name, qty, unit]) => ({ name, qty, unit, catalogId: resolveCatalogId(name) }));
+}
+
+export const EXAMPLE_POSTS: ExamplePost[] = [
+  {
+    id: 'ex-crepioca',
+    authorId: 'ex-jo',
+    title: 'Crepioca de frango com requeijão',
+    description: 'Meu jantar rápido favorito depois do treino.',
+    photoUrl: null,
+    minutes: 10,
+    servings: 1,
+    ingredients: ing([
+      ['Ovos', 2, 'un'],
+      ['Goma de tapioca', 2, 'colher_sopa'],
+      ['Peito de frango desfiado', 80, 'g'],
+      ['Requeijão', 1, 'colher_sopa'],
+      ['Sal', null, 'a_gosto'],
+    ]),
+    steps: [
+      'Bata os ovos com a goma de tapioca e uma pitada de sal.',
+      'Despeje na frigideira untada e doure dos dois lados.',
+      'Recheie com o frango e o requeijão e dobre ao meio.',
+    ],
+    appliances: ['fogao'],
+    createdAt: '2026-09-28T11:10:00Z',
+    baseLikes: 98,
+    baseSaves: 57,
+  },
+  {
+    id: 'ex-baiao',
+    authorId: 'ex-bia',
+    title: 'Baião de dois cremoso',
+    description: 'Do jeitinho que minha avó fazia, com queijo coalho dourado por cima. Fica ainda melhor no dia seguinte.',
+    photoUrl: null,
+    minutes: 40,
+    servings: 4,
+    ingredients: ing([
+      ['Arroz', 1, 'xicara'],
+      ['Feijão-fradinho cozido', 2, 'xicara'],
+      ['Bacon em cubos', 100, 'g'],
+      ['Queijo coalho', 200, 'g'],
+      ['Cebola', 1, 'un'],
+      ['Alho', 3, 'dente'],
+      ['Creme de leite', 200, 'g'],
+      ['Cheiro-verde', 1, 'maco'],
+      ['Sal', null, 'a_gosto'],
+    ]),
+    steps: [
+      'Frite o bacon até dourar e deixe a gordura na panela.',
+      'Refogue a cebola e o alho na mesma gordura.',
+      'Junte o arroz, o feijão com um pouco do caldo e 2 xícaras de água. Cozinhe até secar.',
+      'Misture o creme de leite e metade do queijo coalho em cubos.',
+      'Doure o restante do queijo na frigideira, coloque por cima e finalize com cheiro-verde.',
+    ],
+    appliances: ['fogao'],
+    createdAt: '2026-09-27T19:12:00Z',
+    baseLikes: 214,
+    baseSaves: 96,
+  },
+  {
+    id: 'ex-galinhada',
+    authorId: 'ex-rafa',
+    title: 'Galinhada na pressão',
+    description: 'Uma panela só, rende 4 marmitas e custa pouco. O segredo é dourar bem o frango.',
+    photoUrl: null,
+    minutes: 35,
+    servings: 4,
+    ingredients: ing([
+      ['Coxa e sobrecoxa de frango', 800, 'g'],
+      ['Arroz', 2, 'xicara'],
+      ['Cebola', 1, 'un'],
+      ['Alho', 4, 'dente'],
+      ['Tomate', 2, 'un'],
+      ['Milho em conserva', 1, 'lata'],
+      ['Cúrcuma', 1, 'colher_cha'],
+      ['Cheiro-verde', 1, 'maco'],
+      ['Óleo', 2, 'colher_sopa'],
+      ['Sal', null, 'a_gosto'],
+    ]),
+    steps: [
+      'Tempere o frango com alho e sal e doure bem no óleo, na própria panela de pressão.',
+      'Junte a cebola, o tomate e a cúrcuma e refogue por 2 minutos.',
+      'Acrescente o arroz e 4 xícaras de água quente. Tampe e cozinhe por 8 minutos depois de pegar pressão.',
+      'Tire a pressão, misture o milho e finalize com cheiro-verde.',
+    ],
+    appliances: ['pressao'],
+    createdAt: '2026-09-26T21:40:00Z',
+    baseLikes: 342,
+    baseSaves: 188,
+  },
+  {
+    id: 'ex-salpicao',
+    authorId: 'ex-camila',
+    title: 'Salpicão de frango',
+    description: 'Clássico de domingo que eu faço com o frango que sobra da semana.',
+    photoUrl: null,
+    minutes: 30,
+    servings: 4,
+    ingredients: ing([
+      ['Peito de frango', 400, 'g'],
+      ['Cenoura', 2, 'un'],
+      ['Milho em conserva', 1, 'lata'],
+      ['Ervilha em conserva', 1, 'lata'],
+      ['Maionese', 4, 'colher_sopa'],
+      ['Iogurte natural', 170, 'g'],
+      ['Limão', 1, 'un'],
+      ['Batata palha', 100, 'g'],
+      ['Cheiro-verde', 1, 'maco'],
+    ]),
+    steps: [
+      'Cozinhe e desfie o frango.',
+      'Misture o frango com a cenoura ralada, o milho e a ervilha.',
+      'Tempere com a maionese, o iogurte, o suco do limão e sal.',
+      'Na hora de servir, cubra com batata palha e cheiro-verde.',
+    ],
+    appliances: ['fogao'],
+    createdAt: '2026-09-25T16:05:00Z',
+    baseLikes: 128,
+    baseSaves: 71,
+  },
+  {
+    id: 'ex-escondidinho',
+    authorId: 'ex-jo',
+    title: 'Escondidinho de frango com batata-doce',
+    description: 'Versão proteica e mais leve, sem abrir mão do queijinho gratinado.',
+    photoUrl: null,
+    minutes: 45,
+    servings: 3,
+    ingredients: ing([
+      ['Batata-doce', 600, 'g'],
+      ['Peito de frango', 400, 'g'],
+      ['Requeijão', 3, 'colher_sopa'],
+      ['Muçarela', 100, 'g'],
+      ['Cebola', 1, 'un'],
+      ['Alho', 2, 'dente'],
+      ['Páprica defumada', 1, 'colher_cha'],
+      ['Sal', null, 'a_gosto'],
+    ]),
+    steps: [
+      'Cozinhe a batata-doce e amasse com sal até virar um purê.',
+      'Cozinhe o frango, desfie e refogue com a cebola, o alho e a páprica.',
+      'Misture o requeijão ao frango.',
+      'Monte em camadas: metade do purê, o frango e o restante do purê.',
+      'Cubra com a muçarela e leve à air fryer por 12 minutos a 200 °C.',
+    ],
+    appliances: ['fogao', 'airfryer'],
+    createdAt: '2026-09-24T12:30:00Z',
+    baseLikes: 276,
+    baseSaves: 150,
+  },
+  {
+    id: 'ex-bobo',
+    authorId: 'ex-thiago',
+    title: 'Bobó de camarão',
+    description: 'Receita de família, cremosa e com bastante dendê. Sirva com arroz branco.',
+    photoUrl: null,
+    minutes: 50,
+    servings: 4,
+    ingredients: ing([
+      ['Camarão limpo', 500, 'g'],
+      ['Mandioca', 500, 'g'],
+      ['Leite de coco', 200, 'ml'],
+      ['Azeite de dendê', 3, 'colher_sopa'],
+      ['Cebola', 1, 'un'],
+      ['Pimentão', 1, 'un'],
+      ['Tomate', 2, 'un'],
+      ['Alho', 3, 'dente'],
+      ['Coentro', 1, 'maco'],
+      ['Limão', 1, 'un'],
+    ]),
+    steps: [
+      'Cozinhe a mandioca até ficar bem macia e bata no liquidificador com o leite de coco.',
+      'Tempere o camarão com o alho, o limão e sal.',
+      'Refogue a cebola, o pimentão e o tomate no dendê.',
+      'Junte o camarão e cozinhe por 3 minutos.',
+      'Adicione o creme de mandioca, acerte o sal e finalize com coentro.',
+    ],
+    appliances: ['fogao', 'liquidificador'],
+    createdAt: '2026-09-23T20:15:00Z',
+    baseLikes: 402,
+    baseSaves: 210,
+  },
+  {
+    id: 'ex-alho-oleo',
+    authorId: 'ex-camila',
+    title: 'Macarrão alho e óleo com brócolis',
+    description: 'Janta de 20 minutos com o que tem na despensa.',
+    photoUrl: null,
+    minutes: 20,
+    servings: 2,
+    ingredients: ing([
+      ['Espaguete', 250, 'g'],
+      ['Alho', 5, 'dente'],
+      ['Azeite de oliva', 4, 'colher_sopa'],
+      ['Brócolis', 1, 'maco'],
+      ['Pimenta calabresa', 1, 'pitada'],
+      ['Parmesão ralado', 30, 'g'],
+      ['Sal', null, 'a_gosto'],
+    ]),
+    steps: [
+      'Cozinhe o macarrão em água com sal. Nos últimos 3 minutos, junte o brócolis.',
+      'Doure o alho fatiado no azeite em fogo baixo.',
+      'Escorra o macarrão e o brócolis e misture ao alho com a pimenta calabresa.',
+      'Sirva com parmesão ralado.',
+    ],
+    appliances: ['fogao'],
+    createdAt: '2026-09-22T19:00:00Z',
+    baseLikes: 189,
+    baseSaves: 64,
+  },
+  {
+    id: 'ex-carreteiro',
+    authorId: 'ex-lu',
+    title: 'Arroz carreteiro',
+    description: 'Aproveitei a carne do churrasco de domingo. Aqui em casa nada se desperdiça!',
+    photoUrl: null,
+    minutes: 40,
+    servings: 4,
+    ingredients: ing([
+      ['Arroz', 2, 'xicara'],
+      ['Acém em cubos', 400, 'g'],
+      ['Linguiça calabresa', 200, 'g'],
+      ['Cebola', 1, 'un'],
+      ['Alho', 3, 'dente'],
+      ['Tomate', 2, 'un'],
+      ['Cheiro-verde', 1, 'maco'],
+      ['Óleo', 2, 'colher_sopa'],
+    ]),
+    steps: [
+      'Doure a carne e a calabresa em cubos no óleo.',
+      'Junte a cebola, o alho e o tomate e refogue.',
+      'Acrescente o arroz, refogue por 1 minuto e cubra com 4 xícaras de água quente.',
+      'Cozinhe até secar e finalize com cheiro-verde.',
+    ],
+    appliances: ['fogao'],
+    createdAt: '2026-09-21T13:20:00Z',
+    baseLikes: 156,
+    baseSaves: 83,
+  },
+  {
+    id: 'ex-bolo-cenoura',
+    authorId: 'ex-lu',
+    title: 'Bolo de cenoura de liquidificador',
+    description: 'Com cobertura de chocolate que endurece por cima, do jeito que todo mundo gosta.',
+    photoUrl: null,
+    minutes: 50,
+    servings: 8,
+    ingredients: ing([
+      ['Cenoura', 3, 'un'],
+      ['Ovos', 3, 'un'],
+      ['Óleo', 0.5, 'xicara'],
+      ['Açúcar', 2, 'xicara'],
+      ['Farinha de trigo', 2, 'xicara'],
+      ['Fermento em pó', 1, 'colher_sopa'],
+      ['Chocolate em pó', 4, 'colher_sopa'],
+      ['Manteiga', 1, 'colher_sopa'],
+      ['Leite', 3, 'colher_sopa'],
+    ]),
+    steps: [
+      'Bata no liquidificador a cenoura, os ovos e o óleo.',
+      'Misture com o açúcar e a farinha e, por último, o fermento.',
+      'Asse em forma untada a 180 °C por 40 minutos.',
+      'Para a cobertura, leve ao fogo o chocolate, a manteiga, o leite e 3 colheres de açúcar até engrossar.',
+    ],
+    appliances: ['liquidificador', 'forno'],
+    createdAt: '2026-09-20T15:45:00Z',
+    baseLikes: 521,
+    baseSaves: 305,
+  },
+  {
+    id: 'ex-moqueca-banana',
+    authorId: 'ex-thiago',
+    title: 'Moqueca de banana-da-terra',
+    description: 'Versão vegana que conquista até quem ama peixe.',
+    photoUrl: null,
+    minutes: 35,
+    servings: 3,
+    ingredients: ing([
+      ['Banana-da-terra', 3, 'un'],
+      ['Leite de coco', 200, 'ml'],
+      ['Azeite de dendê', 2, 'colher_sopa'],
+      ['Tomate', 2, 'un'],
+      ['Cebola', 1, 'un'],
+      ['Pimentão', 1, 'un'],
+      ['Coentro', 1, 'maco'],
+      ['Limão', 1, 'un'],
+    ]),
+    steps: [
+      'Corte a banana em rodelas grossas.',
+      'Em uma panela, faça camadas de cebola, tomate, pimentão e banana.',
+      'Regue com o leite de coco e o dendê e cozinhe tampado por 15 minutos.',
+      'Finalize com coentro e limão.',
+    ],
+    appliances: ['fogao'],
+    createdAt: '2026-09-19T18:30:00Z',
+    baseLikes: 167,
+    baseSaves: 92,
+  },
+];
+
+export const EXAMPLE_COMMENTS: StoredComment[] = [
+  {
+    id: 'exc-1',
+    postId: 'ex-baiao',
+    authorId: 'ex-thiago',
+    body: 'Coalho dourado por cima é covardia! Vou fazer no domingo.',
+    createdAt: '2026-09-27T20:02:00Z',
+  },
+  {
+    id: 'exc-2',
+    postId: 'ex-baiao',
+    authorId: 'ex-rafa',
+    body: 'Fiz com feijão carioca e ficou ótimo também.',
+    createdAt: '2026-09-28T09:15:00Z',
+  },
+  {
+    id: 'exc-3',
+    postId: 'ex-galinhada',
+    authorId: 'ex-camila',
+    body: 'Salvei pra semana que vem. Rende muito mesmo?',
+    createdAt: '2026-09-26T22:10:00Z',
+  },
+  {
+    id: 'exc-4',
+    postId: 'ex-galinhada',
+    authorId: 'ex-rafa',
+    body: 'Rende 4 marmitas bem servidas!',
+    createdAt: '2026-09-26T22:31:00Z',
+  },
+  {
+    id: 'exc-5',
+    postId: 'ex-bobo',
+    authorId: 'ex-bia',
+    body: 'Receita linda, igualzinha à da minha tia.',
+    createdAt: '2026-09-24T10:40:00Z',
+  },
+  {
+    id: 'exc-6',
+    postId: 'ex-bolo-cenoura',
+    authorId: 'ex-jo',
+    body: 'A cobertura ficou perfeita, deu casquinha!',
+    createdAt: '2026-09-21T17:05:00Z',
+  },
+];

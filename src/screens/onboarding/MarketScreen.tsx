@@ -38,7 +38,7 @@ export function MarketScreen({ navigation }: RootScreenProps<'Market' | 'EditMar
 
   return (
     <StepLayout
-      step={onboarded ? undefined : 1}
+      step={onboarded ? undefined : 2}
       editLabel="Mercado"
       onBack={() => navigation.goBack()}
       title="onde você faz as compras?"

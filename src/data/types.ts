@@ -59,9 +59,11 @@ export interface Macros {
 export type ApplianceNeed = ApplianceId | ApplianceId[];
 
 export interface RecipeSource {
-  platform: 'tiktok' | 'instagram' | 'link';
+  platform: 'tiktok' | 'instagram' | 'link' | 'comunidade';
   url: string;
   author?: string;
+  /** Community post the recipe came from. */
+  postId?: string;
 }
 
 export interface Recipe {
@@ -84,6 +86,8 @@ export interface Recipe {
   /** Remote cover (imported recipes). Built-in recipes use bundled art. */
   imageUrl?: string;
   imported?: boolean;
+  /** Saved from the community feed. */
+  community?: boolean;
 }
 
 export interface Market {

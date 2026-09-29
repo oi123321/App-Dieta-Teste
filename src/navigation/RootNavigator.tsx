@@ -15,6 +15,11 @@ import { HouseholdScreen } from '../screens/onboarding/HouseholdScreen';
 import { KitchenScreen } from '../screens/onboarding/KitchenScreen';
 import { MarketScreen } from '../screens/onboarding/MarketScreen';
 import { WelcomeScreen } from '../screens/onboarding/WelcomeScreen';
+import { CommunityScreen } from '../screens/social/CommunityScreen';
+import { ComposerScreen } from '../screens/social/ComposerScreen';
+import { PostDetailScreen } from '../screens/social/PostDetailScreen';
+import { ProfileEditorScreen } from '../screens/social/ProfileEditorScreen';
+import { UserProfileScreen } from '../screens/social/UserProfileScreen';
 import { useAppStore } from '../store/useAppStore';
 import { colors } from '../theme';
 import { TabBar } from './TabBar';
@@ -28,6 +33,7 @@ function Tabs() {
     <Tab.Navigator tabBar={(props) => <TabBar {...props} />} screenOptions={{ headerShown: false }}>
       <Tab.Screen name="Plan" component={PlanScreen} options={{ title: 'Semana' }} />
       <Tab.Screen name="Recipes" component={RecipesScreen} options={{ title: 'Receitas' }} />
+      <Tab.Screen name="Community" component={CommunityScreen} options={{ title: 'Comunidade' }} />
       <Tab.Screen name="List" component={ShoppingListScreen} options={{ title: 'Lista' }} />
       <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: 'Perfil' }} />
     </Tab.Navigator>
@@ -53,14 +59,19 @@ export function RootNavigator() {
           <Stack.Screen name="EditHousehold" component={HouseholdScreen} />
           <Stack.Screen name="EditBudget" component={BudgetScreen} />
           <Stack.Screen name="EditKitchen" component={KitchenScreen} />
+          <Stack.Screen name="EditProfile" component={ProfileEditorScreen} />
+          <Stack.Screen name="PostDetail" component={PostDetailScreen} />
+          <Stack.Screen name="UserProfile" component={UserProfileScreen} />
           <Stack.Group screenOptions={{ presentation: 'modal', animation: 'slide_from_bottom' }}>
             <Stack.Screen name="Swap" component={SwapScreen} />
             <Stack.Screen name="Import" component={ImportScreen} />
+            <Stack.Screen name="Composer" component={ComposerScreen} options={{ gestureEnabled: false }} />
           </Stack.Group>
         </Stack.Group>
       ) : (
         <Stack.Group>
           <Stack.Screen name="Welcome" component={WelcomeScreen} />
+          <Stack.Screen name="CreateProfile" component={ProfileEditorScreen} />
           <Stack.Screen name="Market" component={MarketScreen} />
           <Stack.Screen name="Household" component={HouseholdScreen} />
           <Stack.Screen name="Budget" component={BudgetScreen} />

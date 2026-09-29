@@ -267,6 +267,7 @@ const ALIASES: [string, string][] = (
     ['shoyu', 'shoyu'],
     ['molho de soja', 'shoyu'],
     ['mostarda', 'mostarda'],
+    ['azeite de dende', 'dende'],
     ['dende', 'dende'],
     ['curry', 'curry'],
     ['paprica', 'paprica'],
@@ -277,6 +278,11 @@ const ALIASES: [string, string][] = (
     ['oleo', 'oleo'],
   ] as [string, string][]
 ).sort((a, b) => b[0].length - a[0].length);
+
+/** Every alias (normalized) that maps to catalog ingredient `id`. */
+export function aliasesFor(id: string): string[] {
+  return ALIASES.filter(([, target]) => target === id).map(([alias]) => alias);
+}
 
 export function matchIngredient(name: string): string | undefined {
   const padded = ` ${normalize(name)} `;
@@ -351,13 +357,17 @@ const GRAMS_PER_CUP: Record<string, number> = {
   batata_palha: 40,
 };
 
-interface ParsedQty {
+export type ParsedUnit = 'g' | 'kg' | 'ml' | 'l' | 'cup' | 'tbsp' | 'tsp' | 'pinch' | 'piece';
+
+export interface ParsedQty {
   value?: number;
-  unit?: 'g' | 'kg' | 'ml' | 'l' | 'cup' | 'tbsp' | 'tsp' | 'pinch' | 'piece';
+  unit?: ParsedUnit;
+  /** The unit as written, normalized (e.g. "dentes", "colheres de sopa"). */
+  unitWord?: string;
   rest: string;
 }
 
-function parseQuantity(line: string): ParsedQty {
+export function parseQuantity(line: string): ParsedQty {
   let rest = normalize(line.replace(/(\d),(\d)/g, '$1.$2'), true);
   let value: number | undefined;
   const num = rest.match(/^(\d+)\s+(\d+)\/(\d+)|^(\d+)\/(\d+)|^(\d+(?:\.\d+)?)/);
@@ -395,35 +405,34 @@ function parseQuantity(line: string): ParsedQty {
     [/^(unidades?|un|dentes?|latas?|macos?|fatias?|files?|postas?|pacotes?|potes?|caixinhas?|bandejas?)\b/, 'piece'],
   ];
   let unit: ParsedQty['unit'];
+  let unitWord: string | undefined;
   for (const [re, u] of units) {
     const m = rest.match(re);
     if (m) {
       unit = u;
+      unitWord = m[0];
       rest = rest.slice(m[0].length).trim();
       break;
     }
   }
   rest = rest.replace(/^(de|da|do|das|dos)\s+/, '');
-  return { value, unit, rest };
+  return { value, unit, unitWord, rest };
 }
 
-/** Converts a free-text line to a catalog ingredient with a quantity in the catalog's unit. */
-export function parseIngredientLine(line: string): RecipeIngredient | LooseIngredient {
-  const text = line.trim();
-  const { value, unit, rest } = parseQuantity(text);
-  const id = matchIngredient(rest) ?? matchIngredient(text);
-  const ingredient = id ? getIngredient(id) : undefined;
-  if (!ingredient || !id) return { text };
-
+/**
+ * Converts an amount in a kitchen unit to the catalog unit of ingredient `id`
+ * (grams, ml or pieces). `value` undefined means "a gosto" / unspecified.
+ */
+export function toCatalogQty(id: string, value: number | undefined, unit: ParsedUnit | undefined): number | undefined {
+  const ingredient = getIngredient(id);
+  if (!ingredient) return undefined;
   const piece = GRAMS_PER_PIECE[id] ?? 100;
   const amount = value ?? (unit ? 1 : undefined);
   let qty: number;
   if (ingredient.unit === 'g' || ingredient.unit === 'ml') {
     const cup = ingredient.unit === 'ml' ? 240 : (GRAMS_PER_CUP[id] ?? 150);
     const seasoning = ingredient.pantry || ingredient.aisle === 'temperos';
-    if (amount === undefined && seasoning) {
-      return { id, qty: ingredient.unit === 'ml' ? 10 : 2, note: text };
-    }
+    if (amount === undefined && seasoning) return ingredient.unit === 'ml' ? 10 : 2;
     const base = amount ?? 1;
     switch (unit) {
       case 'kg':
@@ -453,7 +462,17 @@ export function parseIngredientLine(line: string): RecipeIngredient | LooseIngre
     const base = amount ?? 1;
     qty = unit === 'g' || unit === 'kg' ? Math.max(0.5, ((unit === 'kg' ? 1000 : 1) * base) / piece) : base;
   }
-  return { id, qty: Math.round(qty * 100) / 100, note: text };
+  return Math.round(qty * 100) / 100;
+}
+
+/** Converts a free-text line to a catalog ingredient with a quantity in the catalog's unit. */
+export function parseIngredientLine(line: string): RecipeIngredient | LooseIngredient {
+  const text = line.trim();
+  const { value, unit, rest } = parseQuantity(text);
+  const id = matchIngredient(rest) ?? matchIngredient(text);
+  const qty = id ? toCatalogQty(id, value, unit) : undefined;
+  if (!id || qty === undefined) return { text };
+  return { id, qty, note: text };
 }
 
 export interface ImportDraft {

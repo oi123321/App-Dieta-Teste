@@ -18,7 +18,7 @@ import { colors, fonts, GUTTER, radius, shadow, type } from '../../theme';
 const FEATURES: { emoji: EmojiName; text: string }[] = [
   { emoji: 'money-bag', text: 'Cardápio que cabe no seu orçamento' },
   { emoji: 'shopping-cart', text: 'Lista por corredor do seu mercado' },
-  { emoji: 'mobile-phone', text: 'Receitas do TikTok e Instagram' },
+  { emoji: 'speech-balloon', text: 'Receitas da comunidade e do TikTok' },
 ];
 
 export function WelcomeScreen({ navigation }: RootScreenProps<'Welcome'>) {
@@ -105,8 +105,8 @@ export function WelcomeScreen({ navigation }: RootScreenProps<'Welcome'>) {
             </View>
           ))}
         </View>
-        <Button label="Começar" icon={ArrowRight} onPress={() => navigation.navigate('Market')} />
-        <Text style={styles.caption}>Leva menos de 1 minuto · sem cadastro</Text>
+        <Button label="Começar" icon={ArrowRight} onPress={() => navigation.navigate('CreateProfile')} />
+        <Text style={styles.caption}>Leva cerca de 1 minuto</Text>
       </View>
     </View>
   );

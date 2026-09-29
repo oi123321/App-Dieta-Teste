@@ -63,6 +63,9 @@ export const space = {
   xxl: 28,
 } as const;
 
+/** Removes the browser focus ring from text inputs that draw their own (web only). */
+export const noOutline = Platform.OS === 'web' ? ({ outlineStyle: 'none' } as object) : undefined;
+
 /** Horizontal gutter used by every screen. */
 export const GUTTER = 20;
 

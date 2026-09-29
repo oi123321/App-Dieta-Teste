@@ -33,6 +33,14 @@
       "expo-image",
       "expo-font",
       [
+        "expo-image-picker",
+        {
+          "photosPermission": "O Salsa usa suas fotos para você escolher a foto do perfil e das receitas que publica.",
+          "cameraPermission": "O Salsa usa a câmera para você fotografar os pratos que publica.",
+          "microphonePermission": false
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "image": "./assets/splash-icon.png",

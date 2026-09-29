@@ -4,12 +4,12 @@ import type { IngredientFlag, Macros, PrefId, Recipe, TagId } from '../data/type
 
 const BUILT_IN = new Map(RECIPES.map((r) => [r.id, r]));
 
-export function findRecipe(id: string, imported: Recipe[]): Recipe | undefined {
-  return BUILT_IN.get(id) ?? imported.find((r) => r.id === id);
+export function findRecipe(id: string, imported: Recipe[], community: Recipe[] = []): Recipe | undefined {
+  return BUILT_IN.get(id) ?? imported.find((r) => r.id === id) ?? community.find((r) => r.id === id);
 }
 
-export function allRecipes(imported: Recipe[]): Recipe[] {
-  return [...imported, ...RECIPES];
+export function allRecipes(imported: Recipe[], community: Recipe[] = []): Recipe[] {
+  return [...imported, ...community, ...RECIPES];
 }
 
 export function ingredientCost(id: string, qty: number, index: number): number {

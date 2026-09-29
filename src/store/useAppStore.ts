@@ -1,36 +1,11 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
-import { createJSONStorage, persist, type StateStorage } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { getMarket } from '../data/markets';
 import type { ApplianceId, Plan, PlanEntry, PrefId, Profile, Recipe } from '../data/types';
 import { buildSlots, fitToBudget, generatePlan, newEntryId, type PlannerContext } from '../lib/planner';
 import { allRecipes } from '../lib/recipes';
-
-/** Storage that never throws (private mode, sandboxed previews, quota errors). */
-const safeStorage: StateStorage = {
-  getItem: async (name) => {
-    try {
-      return await AsyncStorage.getItem(name);
-    } catch {
-      return null;
-    }
-  },
-  setItem: async (name, value) => {
-    try {
-      await AsyncStorage.setItem(name, value);
-    } catch {
-      // Keep working in memory.
-    }
-  },
-  removeItem: async (name) => {
-    try {
-      await AsyncStorage.removeItem(name);
-    } catch {
-      // Ignore.
-    }
-  },
-};
+import { safeStorage } from './safeStorage';
 
 export const DEFAULT_PROFILE: Profile = {
   marketId: null,
@@ -56,6 +31,8 @@ interface AppState {
   checked: Record<string, boolean>;
   customItems: { id: string; name: string }[];
   imported: Recipe[];
+  /** Community recipes the user saved or put on the plan (kept for offline use). */
+  community: Recipe[];
 
   setMarket: (marketId: string, customName?: string) => void;
   setBudget: (budget: number) => void;
@@ -81,13 +58,17 @@ interface AppState {
 
   saveImported: (recipe: Recipe) => void;
   deleteImported: (recipeId: string) => void;
+  rememberRecipe: (recipe: Recipe) => void;
+  forgetRecipe: (recipeId: string) => void;
 
   reset: () => void;
 }
 
-export function plannerContext(state: Pick<AppState, 'profile' | 'liked' | 'disliked' | 'imported'>): PlannerContext {
+export function plannerContext(
+  state: Pick<AppState, 'profile' | 'liked' | 'disliked' | 'imported' | 'community'>,
+): PlannerContext {
   return {
-    recipes: allRecipes(state.imported),
+    recipes: allRecipes(state.imported, state.community),
     profile: state.profile,
     liked: state.liked,
     disliked: state.disliked,
@@ -104,6 +85,7 @@ const INITIAL = {
   checked: {} as Record<string, boolean>,
   customItems: [] as { id: string; name: string }[],
   imported: [] as Recipe[],
+  community: [] as Recipe[],
 };
 
 export const useAppStore = create<AppState>()(
@@ -205,6 +187,14 @@ export const useAppStore = create<AppState>()(
           plan: s.plan ? { ...s.plan, entries: s.plan.entries.filter((e) => e.recipeId !== recipeId) } : s.plan,
         })),
 
+      rememberRecipe: (recipe) => set((s) => ({ community: [recipe, ...s.community.filter((r) => r.id !== recipe.id)] })),
+
+      // Keeps the copy while the plan still uses it.
+      forgetRecipe: (recipeId) =>
+        set((s) =>
+          s.plan?.entries.some((e) => e.recipeId === recipeId) ? {} : { community: s.community.filter((r) => r.id !== recipeId) },
+        ),
+
       reset: () => set({ ...INITIAL }),
     }),
     {
@@ -220,6 +210,7 @@ export const useAppStore = create<AppState>()(
         checked: s.checked,
         customItems: s.customItems,
         imported: s.imported,
+        community: s.community,
       }),
     },
   ),

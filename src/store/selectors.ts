@@ -18,10 +18,11 @@ export function useMarketInfo() {
 
 export function useRecipeLookup() {
   const imported = useAppStore((s) => s.imported);
+  const community = useAppStore((s) => s.community);
   return useMemo(() => {
-    const all = allRecipes(imported);
-    return { all, find: (id: string): Recipe | undefined => findRecipe(id, imported) };
-  }, [imported]);
+    const all = allRecipes(imported, community);
+    return { all, find: (id: string): Recipe | undefined => findRecipe(id, imported, community) };
+  }, [imported, community]);
 }
 
 export function usePlannerContext() {
@@ -29,7 +30,11 @@ export function usePlannerContext() {
   const liked = useAppStore((s) => s.liked);
   const disliked = useAppStore((s) => s.disliked);
   const imported = useAppStore((s) => s.imported);
-  return useMemo(() => plannerContext({ profile, liked, disliked, imported }), [profile, liked, disliked, imported]);
+  const community = useAppStore((s) => s.community);
+  return useMemo(
+    () => plannerContext({ profile, liked, disliked, imported, community }),
+    [profile, liked, disliked, imported, community],
+  );
 }
 
 export function usePlanCost() {

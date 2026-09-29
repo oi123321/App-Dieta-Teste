@@ -16,7 +16,7 @@ import { usePlannerContext } from '../store/selectors';
 import { useAppStore } from '../store/useAppStore';
 import { colors, fonts, GUTTER, radius, shadow, type } from '../theme';
 
-type FilterId = 'pravoce' | 'todas' | 'curtidas' | 'importadas' | TagId;
+type FilterId = 'pravoce' | 'todas' | 'curtidas' | 'comunidade' | 'importadas' | TagId;
 
 const FILTERS: { id: FilterId; label: string }[] = [
   { id: 'pravoce', label: 'Pra você' },
@@ -27,6 +27,7 @@ const FILTERS: { id: FilterId; label: string }[] = [
   { id: 'vegetariano', label: 'Vegetarianas' },
   { id: 'economico', label: 'Econômicas' },
   { id: 'curtidas', label: 'Curtidas' },
+  { id: 'comunidade', label: 'Da comunidade' },
   { id: 'importadas', label: 'Importadas' },
 ];
 
@@ -53,6 +54,8 @@ export function RecipesScreen({ navigation }: TabScreenProps<'Recipes'>) {
           return true;
         case 'curtidas':
           return liked.includes(r.id);
+        case 'comunidade':
+          return Boolean(r.community);
         case 'importadas':
           return Boolean(r.imported);
         default:
@@ -143,9 +146,11 @@ export function RecipesScreen({ navigation }: TabScreenProps<'Recipes'>) {
           <Text style={[type.body, { textAlign: 'center', marginTop: 10 }]}>
             {filter === 'importadas'
               ? 'Você ainda não importou receitas.'
-              : filter === 'curtidas'
-                ? 'Toque em "Curti" nas receitas que você gostar.'
-                : 'Nenhuma receita encontrada.'}
+              : filter === 'comunidade'
+                ? 'Salve receitas na aba Comunidade ou coloque no plano e elas aparecem aqui.'
+                : filter === 'curtidas'
+                  ? 'Toque em "Curti" nas receitas que você gostar.'
+                  : 'Nenhuma receita encontrada.'}
           </Text>
         </View>
       }

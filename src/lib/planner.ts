@@ -80,7 +80,7 @@ function baseScore(recipe: Recipe, ctx: PlannerContext, days: number[]): number 
   const { prefs } = ctx.profile;
   let score = 0;
   if (ctx.liked.includes(recipe.id)) score += 3;
-  if (recipe.imported) score += 1;
+  if (recipe.imported || recipe.community) score += 1;
   const macros = recipeMacros(recipe);
   if (prefs.includes('proteico')) score += (macros.protein - 38) / 8;
   if (prefs.includes('low_carb')) score += (70 - macros.carbs) / 18;

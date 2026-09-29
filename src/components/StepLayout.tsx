@@ -8,7 +8,7 @@ import { colors, fonts, GUTTER, type } from '../theme';
 import { IconButton } from './IconButton';
 import { ProgressHeader } from './ProgressHeader';
 
-export const ONBOARDING_STEPS = 4;
+export const ONBOARDING_STEPS = 5;
 
 interface Props {
   /** Onboarding step (1-based). Omit for the "edit from profile" mode. */

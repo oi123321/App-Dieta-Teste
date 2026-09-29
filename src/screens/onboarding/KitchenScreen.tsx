@@ -42,7 +42,7 @@ export function KitchenScreen({ navigation }: RootScreenProps<'Kitchen' | 'EditK
 
   return (
     <StepLayout
-      step={onboarded ? undefined : 4}
+      step={onboarded ? undefined : 5}
       editLabel="Minha cozinha"
       onBack={() => navigation.goBack()}
       title="o que tem na sua cozinha?"

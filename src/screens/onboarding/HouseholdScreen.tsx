@@ -45,7 +45,7 @@ export function HouseholdScreen({ navigation }: RootScreenProps<'Household' | 'E
 
   return (
     <StepLayout
-      step={onboarded ? undefined : 2}
+      step={onboarded ? undefined : 3}
       editLabel="Casa e preferências"
       onBack={() => navigation.goBack()}
       title="quem janta com você?"

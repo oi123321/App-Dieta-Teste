@@ -92,7 +92,7 @@ export function BudgetScreen({ navigation }: RootScreenProps<'Budget' | 'EditBud
 
   return (
     <StepLayout
-      step={onboarded ? undefined : 3}
+      step={onboarded ? undefined : 4}
       editLabel="Orçamento"
       onBack={() => navigation.goBack()}
       title="quanto você gasta por semana no mercado?"

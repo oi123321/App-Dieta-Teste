@@ -120,6 +120,11 @@ export function daysRange(days: number[]): string {
   return sorted.length === 1 ? first : `${first} – ${last}`;
 }
 
+/** "na segunda", "no sábado". */
+export function onDayLabel(day: number): string {
+  return `${day >= 5 ? 'no' : 'na'} ${DAY_LONG[day].toLowerCase()}`;
+}
+
 export function plural(count: number, one: string, many: string): string {
   return `${count} ${count === 1 ? one : many}`;
 }

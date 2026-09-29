@@ -7,6 +7,7 @@ import { PlusJakartaSans_600SemiBold } from '@expo-google-fonts/plus-jakarta-san
 import { PlusJakartaSans_700Bold } from '@expo-google-fonts/plus-jakarta-sans/700Bold';
 import { PlusJakartaSans_800ExtraBold } from '@expo-google-fonts/plus-jakarta-sans/800ExtraBold';
 import { DefaultTheme, NavigationContainer, type Theme } from '@react-navigation/native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -20,6 +21,13 @@ import { useHydrated } from './src/store/useHydrated';
 import { colors } from './src/theme';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { staleTime: 30_000, retry: 1, refetchOnWindowFocus: false },
+    mutations: { retry: 0 },
+  },
+});
 
 const navTheme: Theme = {
   ...DefaultTheme,
@@ -55,12 +63,14 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.cream }}>
       <SafeAreaProvider>
-        <PhoneFrame>
-          <NavigationContainer theme={navTheme}>
-            <StatusBar style="dark" />
-            <RootNavigator />
-          </NavigationContainer>
-        </PhoneFrame>
+        <QueryClientProvider client={queryClient}>
+          <PhoneFrame>
+            <NavigationContainer theme={navTheme}>
+              <StatusBar style="dark" />
+              <RootNavigator />
+            </NavigationContainer>
+          </PhoneFrame>
+        </QueryClientProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
